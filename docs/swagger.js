@@ -9,6 +9,16 @@ export const swaggerOptions = {
             version: '1.0.0',
             description: 'Simple authentication API with Express, Sequelize, JWT',
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [{ bearerAuth: [] }],
         servers: [
             {
                 url: 'http://localhost:3000/api',

@@ -9,6 +9,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
+import { authenticateToken } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -99,5 +100,29 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Login error', details: err.message });
     }
 });
+
+/**
+ * @swagger
+ * /auth/users:
+ *   get:
+ *     summary: Get list of all users (protected)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users
+ *       401:
+ *         description: Unauthorized (missing or invalid token)
+ */
+router.get('/users', authenticateToken, async (req, res) => {
+    try {
+        const users = await User.findAll({ attributes: ['id', 'email'] });
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
 
 export default router;
